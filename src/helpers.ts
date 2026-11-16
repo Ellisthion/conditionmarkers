@@ -2,6 +2,9 @@ import OBR, { Item, Math2, buildImage, buildText, isImage, isText } from "@owlbe
 import type { Image, ImageGrid, Vector2, Text } from "@owlbear-rodeo/sdk";
 import { getPluginId } from "./getPluginId";
 
+// Match bubble size from compoundItemHelpers.ts
+export const BUBBLE_DIAMETER = 40;
+
 export function isPlainObject(
   item: unknown
 ): item is Record<keyof any, unknown> {
@@ -87,7 +90,7 @@ export async function buildConditionMarker(
   const sceneDpi = await OBR.scene.grid.getDpi();
   // Match the Lanczos-resampled assets in public/images; originals live in images_src.
   const imageDimensions = { width: 128, height: 128 };
-  const imageUrl = `${window.origin}/images/${name.toLowerCase().replace(/['-]/g, "").replace(/[ ]/g, "_")}.webp?v=lanczos128`;
+  const imageUrl = `${window.origin}/images/${name.toLowerCase().replace(/['-]/g, "").replace(/[ ]/g, "_")}.webp`;
 
   // Setup marker grid
   const markerImage = {
@@ -96,10 +99,13 @@ export async function buildConditionMarker(
     mime: "image/webp",
     url: imageUrl,
   }
-  const desiredLength = sceneDpi * 0.25;
+  // Match BUBBLE_DIAMETER (30) for consistent sizing with bubbles
+  const desiredLength = BUBBLE_DIAMETER;
+  const IMAGE_DPI = 150;
+
   const imageGrid: ImageGrid = {
-    offset: { x: 0, y: imageDimensions.height / 2 },
-    dpi: (sceneDpi * imageDimensions.width) / desiredLength,
+    offset: { x: sceneDpi / 2, y: sceneDpi / 2 },
+    dpi: (sceneDpi * IMAGE_DPI) / desiredLength,
   }
 
   const builtMarker = buildImage(markerImage, imageGrid)
@@ -125,49 +131,28 @@ export async function buildConditionMarker(
  * and the number of other markers already attached
  */
 export function getMarkerPosition(imageItem: Image, count: number, sceneDpi: number) {
-  // Arrange markers in a vertical column to the left of the token
-  const markerGridPosition = {
-    x: -1,
-    y: count,
-  };
-
-    // Grid spacing should be proportional to token image width so markers
-    // stay correctly positioned when the token image (and its dpi) changes.
-    const MARKERS_PER_ROW = 5;
-    // width of one cell in image-grid units
-    const tokenGridCellWidth = imageItem.image.width / MARKERS_PER_ROW;
-    // spacing in image grid units (we'll convert to scene units later)
-    const gridCellSpacing = tokenGridCellWidth;
-
-  let position = Math2.multiply(markerGridPosition, gridCellSpacing);
-
-  // Position relative to token
-  position = Math2.subtract(position, imageItem.grid.offset);
-  position = Math2.multiply(position, sceneDpi / imageItem.grid.dpi);
-
-  // Use absolute scale to avoid mirroring
-  const absScale = {
-    x: Math.abs(imageItem.scale.x),
-    y: Math.abs(imageItem.scale.y),
-  };
-
-  position = Math2.multiply(position, absScale);
-
-  // Convert to world position
-  position = Math2.add(position, imageItem.position);
-
-  return position;
+  // Get token bounds in world coordinates (like BubblePosition does)
+  const dpiScale = sceneDpi / imageItem.grid.dpi;
+  const tokenWidth = imageItem.image.width * dpiScale * imageItem.scale.x;
+  const tokenHeight = imageItem.image.height * dpiScale * imageItem.scale.y;
+  
+  // Marker size matches BUBBLE_DIAMETER (30) for consistency
+  const MARKER_SPACING = BUBBLE_DIAMETER; // 30 + 2 padding = 32
+  
+  // Position to the left of token, vertically stacked
+  const markerX = imageItem.position.x - tokenWidth / 2 - 15; // 15 units left of token edge
+  const markerY = imageItem.position.y - tokenHeight / 2 + (count * MARKER_SPACING) + BUBBLE_DIAMETER / 2;
+  
+  return { x: markerX, y: markerY };
 }
 
 /**
- * Calculate the marker's scale based on the token's size
+ * Calculate the marker's scale - always 1:1 for fixed size independent of token scale
  */
 export function getMarkerScale(imageItem: Image) {
-  // Use absolute value of the parent's scales to avoid mirroring the marker
-  const absScale = { x: Math.abs(imageItem.scale.x), y: Math.abs(imageItem.scale.y) };
-  const imageWidthGrid = imageItem.image.width / imageItem.grid.dpi; // width in grid units -> convert to scene when used
-  const scale = Math2.multiply(absScale, imageWidthGrid);
-  return scale;
+  // Return fixed scale (1:1) to keep marker size constant regardless of token size
+  // This matches the behavior of bubbles in compoundItemHelpers.ts which don't scale with tokens
+  return { x: 1, y: 1 };
 }
 
 /**
