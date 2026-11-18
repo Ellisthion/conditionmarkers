@@ -72,18 +72,20 @@ body {
 .condition-name {
   visibility: hidden;
   position: absolute;
+  z-index: 1;
   color: white;
-  font-size: 8px;
+  font-size: 14px;
   text-align: center;
-  width: 50px;
+  min-width: 50px;
   height: 50px;
   overflow-wrap: break-word;
   top: 0px;
-  left: 0px;
+  left: 50%;
+  transform: translateX(-50%);
   border-radius: 0px;
   display: flex;
-  align-items:center;
-  justify-content:center;
+  align-items: center;
+  justify-content: center;
 }
 
 .search-area {
@@ -105,7 +107,7 @@ body {
 
 .conditions-area {
   height: 100%;
-  overflow: hidden;
+  overflow: visible;
   width: 200px;
 }
 
@@ -224,9 +226,12 @@ input:focus {
 
 .condition-name p {
   margin: 0px;
-  background-color: rgba(93, 93, 94, 0.95);
-  width: 46px;
-  padding: 2px;
+  background-color: rgba(69, 69, 69, 0.95);
+  width: 100%;
+  padding: 2px 6px;
+  box-sizing: border-box;
+  overflow-wrap: normal;
+  word-break: normal;
   border-radius: 50px;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 500;

@@ -127,6 +127,7 @@ OBR.onReady(async () => {
       inputClear.style.visibility = "hidden";
     });
   }
+  input?.focus();
 
   const pageLeft = document.querySelector(".page-left");
   const pageRight = document.querySelector(".page-right");
@@ -156,19 +157,28 @@ OBR.onReady(async () => {
     });
   }
 
+  const pageArea = document.querySelector(".lower-flex");
+  pageArea?.addEventListener("wheel", (event: Event) => {
+    if (!(event instanceof WheelEvent) || input?.value || event.deltaY === 0) return;
+
+    const maxPages = Math.ceil(orderedConditions.length / PAGE_SIZE);
+    if (event.deltaY > 0 && currentPage < maxPages) {
+      event.preventDefault();
+      currentPage += 1;
+      showPage();
+    } else if (event.deltaY < 0 && currentPage > 1) {
+      event.preventDefault();
+      currentPage -= 1;
+      showPage();
+    }
+  }, { passive: false });
+
   // Update the button states with the current selection
   const allItems = await OBR.scene.items.getItems();
   updateConditionButtons(allItems);
 
   // Add change listener for updating button states
   OBR.scene.items.onChange(updateConditionButtons);
-
-  // Make sure the popover can receive keyboard events
-  if (appContainer) {
-    appContainer.setAttribute('tabindex', '-1');
-    // Force focus on the container so keyboard events work immediately without clicking
-    appContainer.focus();
-  }
 
   // Attach keydown listener to close popover on "Escape" pressed
   document.addEventListener('keydown', (event) => {
