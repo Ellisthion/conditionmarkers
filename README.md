@@ -15,22 +15,28 @@ The extension can be installed from the Owlbear Rodeo [extensions page](https://
 ### Building images
 
 Install ImageMagick 7 and ensure `magick` is available on `PATH`.
-`npm run build` first generates the WebP assets from the originals in
-`images_src`, then compiles the application. Run `npm run images` to regenerate
-the images separately, including before local development after changing an original.
+`npm run build` first generates lossless WebP assets from the PNG, JPEG, and
+WebP condition originals in `images_src`, then compiles the application. Run
+`npm run images` to regenerate the images separately, including before local
+development after changing an original.
+Generated filenames are lowercased, with apostrophes and hyphens removed and
+spaces replaced by underscores to match the image URLs used by the app.
 
-`public/images` (scene markers) is generated at 128 × 128 pixels and `src/images`
-(bundled icons) at 150 × 150 pixels, using Lanczos resampling and lossless WebP encoding.
-Always add or edit originals in `images_src`; generated files are overwritten
-at each build. The originals are never modified. If the scene output size changes,
-also update `imageDimensions` in `src/helpers.ts`.
+Condition images are generated in `public/images/conditions` at 128 × 128 pixels
+using Lanczos resampling and lossless WebP encoding. Existing generated
+condition WebPs are purged before each generation so removed conditions do not
+leave stale files behind. Toolbar icons are fixed WebP files kept directly in
+`public/images/ui`; they are not processed by the generation script. Add or edit
+condition originals in `images_src`; generated files are overwritten at each
+build, while UI files remain unchanged. The originals are never modified. If
+the scene output size changes, also update `imageDimensions` in `src/helpers.ts`.
 
 On Render, the automatic `RENDER=true` environment variable makes the script use
 the committed generated images without invoking ImageMagick. After editing or
 adding originals, run `npm run images` locally and commit `images_src`,
-`public/images` and `src/images` together. The Render build checks that every
-original has a non-empty generated file in both output directories and reports
-missing assets instead of deploying broken markers.
+`public/images/conditions`, and `public/images/ui` together. The Render build
+checks that every condition original and required UI icon has a non-empty
+generated file and reports missing assets instead of deploying broken markers.
 
 This project is a simple Typescript app and works similarly to the [Colored Rings](https://extensions.owlbear.rodeo/colored-rings) extension by Owlbear Rodeo, which was the basis for this project.
 

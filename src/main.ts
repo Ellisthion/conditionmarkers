@@ -1,4 +1,4 @@
-import OBR, { Image, isImage, Item } from "@owlbear-rodeo/sdk";
+import OBR, { type Image, isImage, type Item } from "@owlbear-rodeo/sdk";
 import { conditions } from "./conditions";
 import { getPluginId } from "./getPluginId";
 import { buildConditionMarker, isPlainObject, updateConditionButtons, repositionConditionMarker, setConditionMarkerNumber } from "./helpers";

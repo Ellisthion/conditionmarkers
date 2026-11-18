@@ -1,4 +1,4 @@
-import OBR, { AttachmentBehavior, Image, Item, isImage } from "@owlbear-rodeo/sdk";
+import OBR, { type AttachmentBehavior, type Image, type Item, isImage } from "@owlbear-rodeo/sdk";
 import { getPluginId } from "./getPluginId";
 import { getMarkerPosition, getMarkerScale, isPlainObject } from "./helpers";
 
@@ -195,4 +195,3 @@ export function setupMarkerUpdates() {
     if (latestItems) updater.update(latestItems);
   });
 }
-

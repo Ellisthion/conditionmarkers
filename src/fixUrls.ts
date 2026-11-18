@@ -1,4 +1,4 @@
-import OBR, { Image } from "@owlbear-rodeo/sdk";
+import OBR, { type Image } from "@owlbear-rodeo/sdk";
 import { getPluginId } from "./getPluginId";
 
 async function fix(ready: boolean) {

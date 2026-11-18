@@ -12,8 +12,8 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "typescript": "^4.6.4",
-    "vite": "^3.1.0"
+    "typescript": "^6.0.3",
+    "vite": "^8.3.8"
   },
   "dependencies": {
     "@owlbear-rodeo/sdk": "^3.1.0"

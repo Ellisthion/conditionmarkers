@@ -1,4 +1,4 @@
-import OBR, { Item, Math2, buildImage, buildText, isImage, isText } from "@owlbear-rodeo/sdk";
+import OBR, { type Item, Math2, buildImage, buildText, isImage, isText } from "@owlbear-rodeo/sdk";
 import type { Image, ImageGrid, Vector2, Text } from "@owlbear-rodeo/sdk";
 import { getPluginId } from "./getPluginId";
 
@@ -88,9 +88,9 @@ export async function buildConditionMarker(
   attachedCount: number,
 ) {
   const sceneDpi = await OBR.scene.grid.getDpi();
-  // Match the Lanczos-resampled assets in public/images; originals live in images_src.
+  // Match the Lanczos-resampled assets in public/images/conditions; originals live in images_src.
   const imageDimensions = { width: 128, height: 128 };
-  const imageUrl = `${window.origin}/images/${name.toLowerCase().replace(/['-]/g, "").replace(/[ ]/g, "_")}.webp`;
+  const imageUrl = `${window.origin}/images/conditions/${name.toLowerCase().replace(/['-]/g, "").replace(/[ ]/g, "_")}.webp`;
 
   // Setup marker grid
   const markerImage = {
