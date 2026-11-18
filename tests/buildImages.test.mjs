@@ -5,7 +5,13 @@ import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync,
 import { tmpdir } from "node:os";
 import { join, resolve, sep } from "node:path";
 
-function fixture(t, { missing = false, empty = false, generate = false } = {}) {
+function fixture(t, {
+  missing = false,
+  empty = false,
+  generate = false,
+  conditionNames = ["Prone", "Shield of Faith", "Hunter's Mark"],
+  extraSource = false,
+} = {}) {
   const base = resolve(tmpdir());
   const root = mkdtempSync(join(base, "conditionmarkers-images-"));
   t.after(() => {
@@ -14,6 +20,7 @@ function fixture(t, { missing = false, empty = false, generate = false } = {}) {
   });
   for (const directory of [
     "scripts",
+    "src",
     "images_src",
     "public/images",
     "public/images/conditions",
@@ -22,10 +29,15 @@ function fixture(t, { missing = false, empty = false, generate = false } = {}) {
     mkdirSync(join(root, directory), { recursive: true });
   }
   copyFileSync(new URL("../scripts/build-images.mjs", import.meta.url), join(root, "scripts/build-images.mjs"));
+  writeFileSync(
+    join(root, "src/conditions.ts"),
+    `export const conditions: string[] = ${JSON.stringify(conditionNames)};`,
+  );
   if (generate) {
     for (const [directory, file] of [
       ["images_src", "Prone.png"],
       ["images_src", "Shield of Faith.png"],
+      ["images_src", "Hunter_s Mark.png"],
     ]) {
       const image = spawnSync("magick", ["-size", "1x1", "xc:red", join(root, directory, file)], {
         encoding: "utf8",
@@ -36,12 +48,15 @@ function fixture(t, { missing = false, empty = false, generate = false } = {}) {
   } else {
     writeFileSync(join(root, "images_src/Prone.png"), "original");
     writeFileSync(join(root, "images_src/Shield of Faith.png"), "original");
+    writeFileSync(join(root, "images_src/Hunter_s Mark.png"), "original");
   }
+  if (extraSource) writeFileSync(join(root, "images_src/Unlisted.png"), "original");
   for (const icon of ["close", "error", "left", "right"]) {
     writeFileSync(join(root, `public/images/ui/${icon}.webp`), `final ${icon}`);
   }
   writeFileSync(join(root, "public/images/conditions/stale.webp"), "stale");
   writeFileSync(join(root, "public/images/conditions/shield_of_faith.webp"), "generated");
+  writeFileSync(join(root, "public/images/conditions/hunters_mark.webp"), "generated");
   writeFileSync(join(root, "public/images/stale.webp"), "legacy");
   if (!missing) writeFileSync(join(root, "public/images/conditions/prone.webp"), empty ? "" : "generated");
   // An empty PATH proves this path never invokes ImageMagick.
@@ -58,7 +73,7 @@ function fixture(t, { missing = false, empty = false, generate = false } = {}) {
 test("Render uses generated images without ImageMagick", t => {
   const { result } = fixture(t);
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /2 condition images and 4 UI icons; skipping ImageMagick/);
+  assert.match(result.stdout, /3 condition images and 4 UI icons; skipping ImageMagick/);
 });
 
 test("Render reports a missing generated image", t => {
@@ -74,6 +89,18 @@ test("Render rejects an empty generated image", t => {
   assert.match(result.stderr, /Generated images missing or empty/);
 });
 
+test("Rejects a condition without a source image", t => {
+  const { result } = fixture(t, { conditionNames: ["Prone", "Shield of Faith", "Missing"] });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Missing image files for conditions: missing/);
+});
+
+test("Rejects a source image without a condition", t => {
+  const { result } = fixture(t, { extraSource: true });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Image files without conditions: unlisted/);
+});
+
 test("Generation purges stale condition and flat images but keeps UI folder separate", t => {
   const version = spawnSync("magick", ["-version"], { encoding: "utf8", windowsHide: true });
   if (version.error) {
@@ -86,7 +113,7 @@ test("Generation purges stale condition and flat images but keeps UI folder sepa
   assert.equal(existsSync(join(root, "public/images/conditions/stale.webp")), false);
   assert.equal(existsSync(join(root, "public/images/stale.webp")), false);
   assert.equal(existsSync(join(root, "public/images/conditions/prone.webp")), true);
+  assert.equal(existsSync(join(root, "public/images/conditions/hunters_mark.webp")), true);
   assert.equal(existsSync(join(root, "public/images/ui/left.webp")), true);
-  assert.equal(readFileSync(join(root, "public/images/ui/left.webp"), "utf8"), "final left");
   assert.equal(readFileSync(join(root, "public/images/ui/left.webp"), "utf8"), "final left");
 });

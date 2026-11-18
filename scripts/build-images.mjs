@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process";
+import { conditions } from "../src/conditions.ts";
 import { mkdirSync, readdirSync, statSync, unlinkSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
@@ -13,7 +14,7 @@ function normalizedName(file) {
   return file
     .replace(/\.[^.]+$/, "")
     .toLowerCase()
-    .replace(/['-]/g, "")
+    .replace(/[_'-]/g, "")
     .replace(/[ ]/g, "_");
 }
 
@@ -38,6 +39,34 @@ function sourceFiles(directory) {
     .sort();
 }
 
+function validateConditionFiles(files) {
+  const conditionCounts = new Map();
+  for (const condition of conditions) {
+    const name = normalizedName(condition);
+    conditionCounts.set(name, (conditionCounts.get(name) ?? 0) + 1);
+  }
+
+  const fileCounts = new Map();
+  for (const file of files) {
+    const name = normalizedName(file);
+    fileCounts.set(name, (fileCounts.get(name) ?? 0) + 1);
+  }
+
+  const missingFiles = [...conditionCounts.keys()].filter(name => !fileCounts.has(name));
+  const extraFiles = [...fileCounts.keys()].filter(name => !conditionCounts.has(name));
+  const duplicateConditions = [...conditionCounts].filter(([, count]) => count > 1).map(([name]) => name);
+  const duplicateFiles = [...fileCounts].filter(([, count]) => count > 1).map(([name]) => name);
+
+  if (missingFiles.length || extraFiles.length || duplicateConditions.length || duplicateFiles.length) {
+    const details = [];
+    if (missingFiles.length) details.push(`Missing image files for conditions: ${missingFiles.join(", ")}`);
+    if (extraFiles.length) details.push(`Image files without conditions: ${extraFiles.join(", ")}`);
+    if (duplicateConditions.length) details.push(`Duplicate conditions: ${duplicateConditions.join(", ")}`);
+    if (duplicateFiles.length) details.push(`Duplicate normalized image filenames: ${duplicateFiles.join(", ")}`);
+    throw new Error(`Condition images must match src/conditions.ts one-to-one.\n${details.join("\n")}`);
+  }
+}
+
 function clearLegacyFlatImages() {
   for (const entry of readdirSync(output.directory, { withFileTypes: true })) {
     if (entry.isFile() && /\.webp$/i.test(entry.name)) {
@@ -59,6 +88,7 @@ function magick(args) {
 function buildImages() {
   const conditionFiles = sourceFiles(conditionSource);
   if (conditionFiles.length === 0) throw new Error("No condition originals found in images_src.");
+  validateConditionFiles(conditionFiles);
 
   // Render deploys the generated assets committed alongside the originals.
   // Do not require a system ImageMagick installation on the build server.
