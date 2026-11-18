@@ -2,7 +2,11 @@
 
 Quickly add condition markers to your characters to keep track of concentration, grapples, invisibility, etc.
 
+Forked from a fork of a fork of the original. Credit to... other people.
+
 Credit for the marker designs goes to /u/JinxShadow on Reddit!
+
+Additional icons from https://game-icons.net/
 
 ![Interface](https://raw.githubusercontent.com/kgbergman/conditionmarkers/main/docs/header.jpg)
 
@@ -76,14 +80,3 @@ The rotation works perfectly for intervals of 90 degrees, but icons are slightly
 
 Licensed under the Apache License, Version 2.0
 
-## Contributing
-
-I'm open to pull requests for bug fixes only. Pull requests for new features will not be accepted in order to keep the UI clean and simple.
-
-## Support
-
-If you want to support me financially, you can [buy me a coffee](https://www.buymeacoffee.com/keegandev)!
-
-[Edit] Hi, Seamus here, I've taken over maintenance of this extension. If you have any problems please make a post in the [Owlbear Rodeo Discord extension-support forum](https://discord.gg/u5RYMkV98s)
-
-Copyright (C) 2023 Keegan Bergman
