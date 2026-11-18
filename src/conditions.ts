@@ -1,43 +1,67 @@
 /** Conditions */
-export const conditions = [
-  'Advantage',
-  'Awed',
-  'Baned',
-  'Bleeding Out',
-  'Blessed',
-  'Blinded',
+export const conditions: string[] = [
+  // 16 per page
+
+  // Page 1
   'Bloodied',
-  'Blur',
-  'Charmed',
-  'Chilled',
-  'Compelled Duel',
-  'Concentration',
-  'Confused',
-  'Deafened',
+  'Advantage',
   'Disadvantage',
-  'Exhausted',
-  'Flying',
-  'Frightened',
-  'Grappled',
-  'Hasted',
-  'Highlighted',
-  'Incapacitated',
-  'Invisible',
-  'Mark',
-  'Mirror Image',
-  'Burning',
-  'Paralyzed',
-  'Petrified',
-  'Polymorph',
-  'Pot Plant',
-  'Poisoned',
+  'Concentration',
+
   'Prone',
-  'Reaction Used',
+  'Grappled',
   'Restrained',
-  'Sanctuary',
-  'Shield of Faith',
-  'Slow',
   'Stunned',
+
+  'Paralyzed',
+  'Incapacitated',
   'Unconscious',
-  'Wild Shape'
+  'Bleeding Out',
+
+  'Charmed',
+  'Awed',
+  'Frightened',
+  'Flying',
+
+  // Page 2
+  'Hasted',
+  'Slowed',
+  'Burning',
+  'Chilled',
+
+  'Invisible',
+  'Poisoned',
+  'Confused',
+  'Petrified',
+
+  'Blinded',
+  'Deafened',
+  'Silenced',
+  'Exhausted',
+
+  'Blessed',
+  'Baned',
+  'Mirror Image',
+  'Shield of Faith',
+
+  // Page 3
+  'Hex',
+  'Blur',
+  'Compelled Duel',
+  'Sanctuary',
+
+  'Entangled',
+  "Hunter's Mark",
+  'Faerie Fire',
+  'Vulnerable',
+
+  'Wild Shape',
+  'Polymorphed',
+  'Ethereal',
+  'Pot Plant',
+
+  'Dodging',
+  'Mark',
+  'Highlighted',
+  'Reaction Used',
 ];
