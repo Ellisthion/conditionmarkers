@@ -86,6 +86,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  pointer-events: none;
+}
+
+.condition-button:hover .condition-name,
+.condition-button:focus-visible .condition-name {
+  visibility: visible;
 }
 
 .search-area {
@@ -241,7 +248,7 @@ input:focus {
   transition: opacity 0.2s;
 }
 
-:is(.condition-button:focus-visible .condition-name, .condition-name:hover) p {
+:is(.condition-button:hover .condition-name, .condition-button:focus-visible .condition-name) p {
   visibility: visible;
   opacity: 1;
 }

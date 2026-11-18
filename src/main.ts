@@ -53,10 +53,6 @@ function attachConditionButtonListeners(button: HTMLButtonElement) {
 
   button.addEventListener("mouseenter", () => {
     hoveredCondition = button.id;
-    const conditionName = button.querySelector<HTMLDivElement>(".condition-name");
-    if (conditionName) {
-      conditionName.style.visibility = "visible";
-    }
   });
 
   button.addEventListener("mouseleave", () => {
@@ -64,10 +60,6 @@ function attachConditionButtonListeners(button: HTMLButtonElement) {
       hoveredCondition = null;
     }
     resetNumberInput();
-    const conditionName = button.querySelector<HTMLDivElement>(".condition-name");
-    if (conditionName) {
-      conditionName.style.visibility = "hidden";
-    }
   });
 }
 
