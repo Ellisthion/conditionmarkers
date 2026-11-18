@@ -1,12 +1,15 @@
 /** Conditions */
 export const conditions = [
   'Advantage',
+  'Awed',
   'Baned',
   'Bleeding Out',
   'Blessed',
   'Blinded',
+  'Bloodied',
   'Blur',
   'Charmed',
+  'Chilled',
   'Compelled Duel',
   'Concentration',
   'Confused',
@@ -25,6 +28,8 @@ export const conditions = [
   'Burning',
   'Paralyzed',
   'Petrified',
+  'Polymorph',
+  'Pot Plant',
   'Poisoned',
   'Prone',
   'Reaction Used',
@@ -33,6 +38,6 @@ export const conditions = [
   'Shield of Faith',
   'Slow',
   'Stunned',
-  'Unconcious',
+  'Unconscious',
   'Wild Shape'
 ];
